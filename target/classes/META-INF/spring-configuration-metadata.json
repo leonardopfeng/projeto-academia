@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "file",
+      "type": "br.com.lelis.config.FileStorageConfig",
+      "sourceType": "br.com.lelis.config.FileStorageConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "file.upload-dir",
+      "type": "java.lang.String",
+      "sourceType": "br.com.lelis.config.FileStorageConfig"
+    }
+  ],
+  "hints": []
+}

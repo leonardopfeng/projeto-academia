@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
+
+    <configuration>
+        <custom-converters>
+            <converter type="br.com.lelis.mapper.custom.GroupIdToExerciseGroupMapper">
+                <class-a>java.lang.Long</class-a>
+                <class-b>br.com.lelis.model.ExerciseGroup</class-b>
+            </converter>
+        </custom-converters>
+    </configuration>
+
+    <mapping>
+        <class-a>br.com.lelis.model.Exercise</class-a>
+        <class-b>br.com.lelis.data.vo.ExerciseVO</class-b>
+        <field>
+            <a>group</a>
+            <b>group</b>
+            <a-hint>br.com.lelis.model.ExerciseGroup</a-hint>
+            <b-hint>java.lang.Long</b-hint>
+        </field>
+    </mapping>
+</mappings>
