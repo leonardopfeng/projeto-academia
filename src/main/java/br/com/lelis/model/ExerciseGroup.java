@@ -18,15 +18,11 @@ public class ExerciseGroup implements Serializable {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Exercise> exercises;
-
     public ExerciseGroup(){}
 
-    public ExerciseGroup(long id, String name, List<Exercise> exercises) {
+    public ExerciseGroup(long id, String name) {
         this.id = id;
         this.name = name;
-        this.exercises = exercises;
     }
 
     public long getId() {
@@ -45,24 +41,16 @@ public class ExerciseGroup implements Serializable {
         this.name = name;
     }
 
-    public List<Exercise> getExercises() {
-        return exercises;
-    }
-
-    public void setExercises(List<Exercise> exercises) {
-        this.exercises = exercises;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExerciseGroup that = (ExerciseGroup) o;
-        return id == that.id && Objects.equals(name, that.name) && Objects.equals(exercises, that.exercises);
+        return id == that.id && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, exercises);
+        return Objects.hash(id, name);
     }
 }

@@ -23,18 +23,16 @@ public class Exercise implements Serializable {
     @Column(name = "video_url")
     private String videoUrl;
 
-    @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    @JsonIgnore
-    private ExerciseGroup group;
+    private long groupId;
 
     public Exercise(){}
 
-    public Exercise(long id, String name, String videoUrl, ExerciseGroup group) {
+    public Exercise(long id, String name, String videoUrl, long groupId) {
         this.id = id;
         this.name = name;
         this.videoUrl = videoUrl;
-        this.group = group;
+        this.groupId = groupId;
     }
 
     public long getId() {
@@ -61,18 +59,12 @@ public class Exercise implements Serializable {
         this.videoUrl = videoUrl;
     }
 
-    public ExerciseGroup getGroup() {
-        return group;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(ExerciseGroup group) {
-        this.group = group;
-    }
-
-    @JsonProperty("group")
-    @Schema(description = "The ID of the associated ExerciseGroup")
-    public long getGroupId(){
-        return group != null ? group.getId() : 0;
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
 
     @Override
@@ -80,11 +72,11 @@ public class Exercise implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Exercise exercise = (Exercise) o;
-        return id == exercise.id && Objects.equals(name, exercise.name) && Objects.equals(videoUrl, exercise.videoUrl) && Objects.equals(group, exercise.group);
+        return id == exercise.id && groupId == exercise.groupId && Objects.equals(name, exercise.name) && Objects.equals(videoUrl, exercise.videoUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, videoUrl, group);
+        return Objects.hash(id, name, videoUrl, groupId);
     }
 }

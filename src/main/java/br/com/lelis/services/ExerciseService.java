@@ -79,13 +79,9 @@ public class ExerciseService {
 
         logger.info("Creating one person!");
 
-        var group = groupRepository.findById(exercise.getGroup())
-                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
+        var entity = DozerMapper.parseObject(exercise, Exercise.class);
 
-        Exercise entity = DozerMapper.parseObject(exercise, Exercise.class);
-        entity.setGroup(group);
-
-        ExerciseVO vo = DozerMapper.parseObject(repository.save(entity), ExerciseVO.class);
+        var vo = DozerMapper.parseObject(repository.save(entity), ExerciseVO.class);
         vo.add(linkTo(methodOn(ExerciseController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
@@ -100,12 +96,7 @@ public class ExerciseService {
         var entity = repository.findById(exercise.getKey())
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 
-        // Since 'exercise.getGroup()' returns a 'long', and the entity.setGroup expects an ExerciseGroup,
-        // it must need to retrieve it from the database using the groupRepository
-        var group = groupRepository.findById(exercise.getGroup())
-                        .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
-
-        entity.setGroup(group);
+        entity.setGroupId(exercise.getGroupId());
         entity.setName(exercise.getName());
         entity.setVideoUrl(exercise.getVideoUrl());
 

@@ -16,7 +16,7 @@ public class ExerciseVO extends RepresentationModel<ExerciseVO> implements Seria
     private long key;
     private String name;
     private String videoUrl;
-    private long group;
+    private long groupId;
 
     public ExerciseVO(){}
 
@@ -44,12 +44,12 @@ public class ExerciseVO extends RepresentationModel<ExerciseVO> implements Seria
         this.videoUrl = videoUrl;
     }
 
-    public long getGroup() {
-        return group;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(long group) {
-        this.group = group;
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
 
     @Override
@@ -58,11 +58,11 @@ public class ExerciseVO extends RepresentationModel<ExerciseVO> implements Seria
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ExerciseVO that = (ExerciseVO) o;
-        return key == that.key && group == that.group && Objects.equals(name, that.name) && Objects.equals(videoUrl, that.videoUrl);
+        return key == that.key && groupId == that.groupId && Objects.equals(name, that.name) && Objects.equals(videoUrl, that.videoUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, name, videoUrl, group);
+        return Objects.hash(super.hashCode(), key, name, videoUrl, groupId);
     }
 }
