@@ -14,4 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface TrainingSessionRepository extends JpaRepository<TrainingSession, Long> {
     @Query("SELECT t FROM TrainingSession t WHERE t.clientId=:clientId")
     Page<TrainingSession> findAllByClientId(@Param("clientId") long clientId, Pageable pageable);
+
+    @Query("SELECT t FROM TrainingSession t WHERE t.coachId=:coachId")
+    Page<TrainingSession> findAllByCoachId(@Param("coachId") long coachId, Pageable pageable);
 }

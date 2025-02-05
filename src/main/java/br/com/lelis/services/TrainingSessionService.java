@@ -80,6 +80,29 @@ public class TrainingSessionService {
         return assembler.toModel(trainingSessionVosPage, link);
     }
 
+    public PagedModel<EntityModel<TrainingSessionVO>> findAllByCoachId(long coachId, Pageable pageable) {
+
+        logger.info("Finding all training session by coach id!");
+
+        // using paging to prevent performing problems
+        var trainingSessionPage = repository.findAllByCoachId(coachId, pageable);
+        var trainingSessionVosPage = trainingSessionPage.map(p -> DozerMapper.parseObject(p, TrainingSessionVO.class));
+
+        trainingSessionVosPage.map(
+                p -> p.add(
+                        linkTo(methodOn(TrainingSessionController.class).findById(p.getKey())).withSelfRel()
+                )
+        );
+
+        Link link = linkTo(methodOn(TrainingSessionController.class).findAll(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                "ASC")
+        ).withSelfRel();
+
+        return assembler.toModel(trainingSessionVosPage, link);
+    }
+
 
     public TrainingSessionVO findById(Long id) {
 
