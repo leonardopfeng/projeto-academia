@@ -1,41 +1,47 @@
 package br.com.lelis.data.vo;
 
 import com.github.dozermapper.core.Mapping;
-import jakarta.persistence.Id;
 import org.springframework.hateoas.RepresentationModel;
-
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.Objects;
 
 public class SessionExerciseVO extends RepresentationModel<SessionExerciseVO> implements Serializable {
-    private static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-    @Mapping("sessionId")
-    private long sessionId;
-    @Mapping("exerciseId")
-    private long exerciseId;
+    @Mapping("id") // Mapeia a chave composta
+    private SessionExerciseIdVO id;
+
     private int sequence;
     private int sets;
     private int reps;
     private double weight;
-    public SessionExerciseVO(){}
 
-    public long getSessionId() {
-        return sessionId;
+    public SessionExerciseVO() {}
+
+    public SessionExerciseVO(SessionExerciseIdVO id, int sequence, int sets, int reps, double weight) {
+        this.id = id;
+        this.sequence = sequence;
+        this.sets = sets;
+        this.reps = reps;
+        this.weight = weight;
     }
 
-    public void setSessionId(long sessionId) {
-        this.sessionId = sessionId;
+    public SessionExerciseIdVO getId() {
+        return id;
+    }
+
+    public void setId(SessionExerciseIdVO id) {
+        this.id = id;
+    }
+
+    public long getSessionId() {
+        return id != null ? id.getSessionId() : 0;
     }
 
     public long getExerciseId() {
-        return exerciseId;
+        return id != null ? id.getExerciseId() : 0;
     }
 
-    public void setExerciseId(long exerciseId) {
-        this.exerciseId = exerciseId;
-    }
 
     public int getSequence() {
         return sequence;
@@ -75,11 +81,15 @@ public class SessionExerciseVO extends RepresentationModel<SessionExerciseVO> im
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         SessionExerciseVO that = (SessionExerciseVO) o;
-        return sessionId == that.sessionId && exerciseId == that.exerciseId && sequence == that.sequence && sets == that.sets && reps == that.reps && Double.compare(weight, that.weight) == 0;
+        return Objects.equals(id, that.id) &&
+                sequence == that.sequence &&
+                sets == that.sets &&
+                reps == that.reps &&
+                Double.compare(weight, that.weight) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), sessionId, exerciseId, sequence, sets, reps, weight);
+        return Objects.hash(super.hashCode(), id, sequence, sets, reps, weight);
     }
 }

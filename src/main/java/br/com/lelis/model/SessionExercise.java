@@ -8,12 +8,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "session_exercises")
 public class SessionExercise implements Serializable {
-    private static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-    @Column(name = "session_id")
-    private long sessionId;
-    @Column(name = "exercise_id")
-    private long exerciseId;
+    @EmbeddedId
+    private SessionExerciseId id;
+
     @Column(name = "sequence")
     private int sequence;
     @Column(name = "sets")
@@ -23,31 +22,22 @@ public class SessionExercise implements Serializable {
     @Column(name = "weight")
     private double weight;
 
-    public SessionExercise(){}
+    public SessionExercise() {}
 
-    public SessionExercise(long sessionId, long exerciseId, int sequence, int sets, int reps, double weight) {
-        this.sessionId = sessionId;
-        this.exerciseId = exerciseId;
+    public SessionExercise(SessionExerciseId id, int sequence, int sets, int reps, double weight) {
+        this.id = id;
         this.sequence = sequence;
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
     }
 
-    public long getSessionId() {
-        return sessionId;
+    public SessionExerciseId getId() {
+        return id;
     }
 
-    public void setSessionId(long sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public long getExerciseId() {
-        return exerciseId;
-    }
-
-    public void setExerciseId(long exerciseId) {
-        this.exerciseId = exerciseId;
+    public void setId(SessionExerciseId id) {
+        this.id = id;
     }
 
     public int getSequence() {
@@ -87,11 +77,15 @@ public class SessionExercise implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SessionExercise that = (SessionExercise) o;
-        return sessionId == that.sessionId && exerciseId == that.exerciseId && sequence == that.sequence && sets == that.sets && reps == that.reps && Double.compare(weight, that.weight) == 0;
+        return Objects.equals(id, that.id) &&
+                sequence == that.sequence &&
+                sets == that.sets &&
+                reps == that.reps &&
+                Double.compare(weight, that.weight) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sessionId, exerciseId, sequence, sets, reps, weight);
+        return Objects.hash(id, sequence, sets, reps, weight);
     }
 }
