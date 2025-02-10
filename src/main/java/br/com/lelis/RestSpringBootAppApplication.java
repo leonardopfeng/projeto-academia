@@ -24,7 +24,7 @@ public class RestSpringBootAppApplication {
 		passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
 
 		String result = passwordEncoder.encode("admin123");
-		System.out.println(result);
+		System.out.println("Senha admin123: "+ result);
 	}
 
 }

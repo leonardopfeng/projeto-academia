@@ -10,6 +10,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,20 +26,22 @@ public class AuthServices {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @SuppressWarnings("rawtypes")
     public ResponseEntity signIn(AccountCredentialsVO data){
         try{
             var username = data.getUsername();
             var password = data.getPassword();
-            System.out.println("username" + username);
-            System.out.println("password" + password);
+
+            var user = repository.findByUserName(username);
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
 
-            System.out.println("Teste");
 
-            var user = repository.findByUsername(username);
             var tokenResponse = new TokenVO();
 
             if(user != null){
@@ -56,7 +60,7 @@ public class AuthServices {
 
     @SuppressWarnings("rawtypes")
     public ResponseEntity refreshToken(String username, String refreshToken){
-        var user = repository.findByUsername(username);
+        var user = repository.findByUserName(username);
         var tokenResponse = new TokenVO();
 
         if(user != null){
