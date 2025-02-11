@@ -1,8 +1,7 @@
 package br.com.lelis.services;
 
-import br.com.lelis.controllers.PersonController;
+
 import br.com.lelis.controllers.TrainingSessionController;
-import br.com.lelis.data.vo.PersonVO;
 import br.com.lelis.data.vo.TrainingSessionVO;
 import br.com.lelis.exceptions.RequiredObjectIsNullException;
 import br.com.lelis.exceptions.ResourceNotFoundException;

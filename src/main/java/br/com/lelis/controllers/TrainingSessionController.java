@@ -1,6 +1,6 @@
 package br.com.lelis.controllers;
 
-import br.com.lelis.data.vo.PersonVO;
+
 import br.com.lelis.data.vo.TrainingSessionVO;
 import br.com.lelis.services.TrainingSessionService;
 import io.swagger.v3.oas.annotations.Operation;
