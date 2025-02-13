@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `training_sessions` (
                                                    `coach_id` BIGINT(20) NOT NULL,
                                                    `name` VARCHAR(100) NOT NULL,
                                                    `start_date` DATE NOT NULL,
-                                                   `status` ENUM('active', 'inactive') DEFAULT 'active',
+                                                   `status` BIT(1) DEFAULT 1,
                                                    FOREIGN KEY (`client_id`) REFERENCES `clients` (`user_id`) ON DELETE CASCADE,
                                                    FOREIGN KEY (`coach_id`) REFERENCES `coaches` (`user_id`) ON DELETE CASCADE
 );

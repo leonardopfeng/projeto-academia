@@ -33,8 +33,6 @@ public class AuthController {
             return  ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
         }
 
-        System.out.println(data);
-
         var token = authServices.signIn(data);
 
         if(token == null){

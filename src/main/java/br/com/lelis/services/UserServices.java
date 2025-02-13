@@ -68,7 +68,6 @@ public class UserServices implements UserDetailsService {
 
         // Codifica a senha antes de armazenar
         String encodedPassword = passwordEncoder.encode(userVO.getPassword());
-        System.out.println("Senha codificada:" + encodedPassword);
 
         // Converte as roles em Permissions
         List<Permission> permissions = convertRolesToPermissions(userVO.getRoles());

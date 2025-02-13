@@ -49,8 +49,6 @@ public class JwtTokenProvider {
     }
 
     public TokenVO createAccessToken(String username, List<String> roles){
-        System.out.println("createAccessToken roles: " + roles);
-
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
         var accessToken = getAccessToken(username, roles, now, validity);

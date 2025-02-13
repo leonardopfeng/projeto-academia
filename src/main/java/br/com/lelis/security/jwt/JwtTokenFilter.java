@@ -30,7 +30,6 @@ public class JwtTokenFilter extends GenericFilterBean {
 
         // Obtém o token do cabeçalho Authorization
         String token = tokenProvider.resolveToken(request);
-        System.out.println("Token = "  + token);
 
         if (token != null && tokenProvider.validateToken(token)) {
             // Se o token for válido, obtém a autenticação e a armazena no contexto do Spring Security
