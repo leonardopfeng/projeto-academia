@@ -89,7 +89,7 @@ Todas as requisições protegidas exigem um token JWT. Para obter um token, faç
 
 Autenticação (Auth)
 
-POST `/auth/login`
+POST `/auth/signin`
 
   - Realiza o login e retorna um token JWT válido
   - Input
