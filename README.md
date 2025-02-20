@@ -11,6 +11,8 @@ Este projeto é uma API RESTful para gerenciamento de academias, permitindo o ca
 
 - 🔐 Autenticação
 
+- 🌊 Fluxo
+
 - 📌 Endpoints
 
     - Autenticação (Auth) - Operações para `signin` e `refresh`
@@ -41,6 +43,8 @@ Este projeto é uma API RESTful para gerenciamento de academias, permitindo o ca
 
 - MySQL
 
+- CORS
+
 - JWT para autenticação
 
 
@@ -64,6 +68,21 @@ Este projeto é uma API RESTful para gerenciamento de academias, permitindo o ca
 ## 🔐 Autenticação
 
 Todas as requisições protegidas exigem um token JWT. Para obter um token, faça login usando o endpoint de autenticação.
+
+
+## 🌊 Fluxo do programa
+  
+  - Acessar o Swagger (`http://localhost:8080/swagger-ui/index.html#/`)
+  - Autenticação pelo Swagger (admin / admin)
+    - Copiar o `accessToken` gerado na resposta e colar no botão "Authorize"
+  - Cadastro de grupo de exercício
+    - Cadastro de exercício
+  - Cadastro de novos usuários
+    - Cadastro de treinador
+      - Cadastro de cliente
+  - Cadastro de sessão de treinamento
+    - Cadastro de exercícios no treino
+
 
 
 ## 📌 Exemplos de Endpoints

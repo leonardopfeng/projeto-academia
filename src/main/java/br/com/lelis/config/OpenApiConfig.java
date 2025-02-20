@@ -14,7 +14,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("API de Autenticação")
+                .info(new Info().title("API - Projeto Academia")
                         .description("Documentação da API com autenticação JWT")
                         .version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList("bearer"))

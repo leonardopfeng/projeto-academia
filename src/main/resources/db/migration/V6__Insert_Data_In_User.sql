@@ -1,0 +1,2 @@
+﻿insert into `users` (`user_name`, `full_name`, `password`, `account_non_expired`,`account_non_locked`,`credentials_non_expired`,`enabled`) values
+    ('admin', 'Admin', '{pbkdf2}6c278f285d61d677969915263fba33599ae02c7ab614b244d9310178eb7d32ceb29ae4e0225fbe63', 1, 1, 1, 1);
