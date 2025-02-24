@@ -24,7 +24,7 @@ public class AuthControllerJsonTest{
     @Test
     @Order(1)
     public void testSignin() throws JsonProcessingException, JsonMappingException {
-        AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin123");
+        AccountCredentialsVO user = new AccountCredentialsVO("admin", "admin");
 
         tokenVO = given()
                 .basePath("/auth/signin")
@@ -46,7 +46,7 @@ public class AuthControllerJsonTest{
     @Test
     @Order(2)
     public void testRefresh() throws JsonProcessingException, JsonMappingException {
-        AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin123");
+        AccountCredentialsVO user = new AccountCredentialsVO("admin", "admin");
 
         var newTokenVO = given()
                 .basePath("/auth/refresh")
