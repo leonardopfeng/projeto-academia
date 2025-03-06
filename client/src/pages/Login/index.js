@@ -26,7 +26,7 @@ export default function Login(){
             localStorage.setItem('username', username);
             localStorage.setItem('accessToken', response.data.accessToken);
 
-            navigate('/teste');
+            navigate('/home');
         } catch (error) {
             alert("Username or Password invalid. Please try again");
         }
