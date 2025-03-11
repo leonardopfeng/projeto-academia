@@ -1,31 +1,58 @@
 import React, { useState } from "react";
 import { Button } from "../atoms/Button";
 import { Link } from "react-router-dom";
+import "./Header.css";
 
 export const Header = () => {
+    // Use a single state to track which dropdown is open (if any)
+    const [activeDropdown, setActiveDropdown] = useState(null);
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+    // Toggle function to handle dropdown visibility
+    const toggleDropdown = (dropdown) => {
+        if (activeDropdown === dropdown) {
+            // If clicking the same dropdown that's already open, close it
+            setActiveDropdown(null);
+        } else {
+            // Otherwise, open the clicked dropdown and close any other
+            setActiveDropdown(dropdown);
+        }
+    };
 
     return(
-        <header className="bg-blue-600 text-white p-4 flex justify-between">
-            <Link to='/teste' className="no-underline text-black">
-                <h1 className="text-x1 font-bold text-white cursor-pointer">Projeto Academia</h1>
+        <header className="header">
+            <Link to='/teste' style={{ textDecoration: 'none' }}>
+                <h1 className="header-title">Projeto Academia</h1>
             </Link>
-            <nav>
-                <div className="relative inline-block text-left">
+            <nav className="header-nav">
+                <div className="dropdown-container">
                 <button 
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="mr-4"
+                    onClick={() => toggleDropdown('cadastros')}
+                    className="dropdown-button"
                 >
                     Cadastros
                 </button>
-                    {dropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white text-black border rounded shadow-lg">
-                            <Link to="/add/exercise" className="block px-4 py-2 hover:bg-gray-200" onClick={() => setDropdownOpen(false)}>Cadastrar Exercício</Link>
+                    {activeDropdown === 'cadastros' && (
+                        <div className="dropdown-menu">
+                            <Link to="/add/exercise" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Exercício</Link>
                         </div>
                     )}
                 </div>
 
+                <div className="dropdown-container">
+                <button 
+                    onClick={() => toggleDropdown('listagem')}
+                    className="dropdown-button"
+                >
+                    Listagem
+                </button>
+                    {activeDropdown === 'listagem' && (
+                        <div className="dropdown-menu">
+                            <Link to="/exercise/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Exercício</Link>
+                            <Link to="/exerciseGroup/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Grupo de Exercício</Link>
+                            <Link to="/client/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cliente</Link>
+                        </div>
+                    )}
+                </div>
             </nav>
 
         </header>
