@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
 
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import ExerciseView from "./pages/Exercise/View";
+import ExerciseGroupView from "./pages/ExerciseGroup/View";
 import { Header } from "./components/organisms/Header";
 
 export default function AppRoutes(){
@@ -16,6 +18,8 @@ export default function AppRoutes(){
                 <Routes>
                     <Route path="/" element={<Login/>}/>
                     <Route path="/home" element={<Home/>}/>
+                    <Route path="/exercise/view" element={<ExerciseView/>}/>
+                    <Route path="/exerciseGroup/view" element={<ExerciseGroupView/>}/>
                 </Routes>
             </main>
         </>
