@@ -9,6 +9,8 @@ import ExerciseForm from "./pages/Exercise/Form";
 import ExerciseGroupForm from "./pages/ExerciseGroup/Form";
 import UserView from "./pages/User/View";
 import UserForm from "./pages/User/Form";
+import CoachView from "./pages/Coach/View";
+import CoachForm from "./pages/Coach/Form";
 import { Header } from "./components/organisms/Header";
 
 export default function AppRoutes(){
@@ -31,6 +33,9 @@ export default function AppRoutes(){
                     <Route path="/user/view" element={<UserView/>}/>
                     <Route path="/user/add" element={<UserForm/>}/>
                     <Route path="/user/edit/:id" element={<UserForm/>}/>
+                    <Route path="/coach/view" element={<CoachView/>}/>
+                    <Route path="/coach/add" element={<CoachForm/>}/>
+                    <Route path="/coach/edit/:id" element={<CoachForm/>}/>
                 </Routes>
             </main>
         </>

@@ -6,6 +6,23 @@ import './DataView.css';
 const DataView = ({ data, fields, onItemClick, onDelete, showVideoButton }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
 
+  const formatFieldValue = (field, value) => {
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+    
+    if (field === 'hiredDate' && value) {
+      const date = new Date(value);
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+    
+    return value;
+  };
+
   return (
     <div className="data-view">
       {data.map((item) => (
@@ -16,9 +33,8 @@ const DataView = ({ data, fields, onItemClick, onDelete, showVideoButton }) => {
           >
             {fields.map((field) => (
               <div key={field} className="data-view-field">
-                {field === 'name' && item[field]}
-                {field === 'groupName' && `Group: ${item[field]}`}
-                {field === 'videoUrl' && item[field]}
+                <span className="field-label">{field}:</span>
+                <span className="field-value">{formatFieldValue(field, item[field])}</span>
               </div>
             ))}
           </div>

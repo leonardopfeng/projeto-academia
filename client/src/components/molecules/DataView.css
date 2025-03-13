@@ -7,7 +7,7 @@
 .data-view-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 1rem;
   background-color: #fff;
   border-radius: 8px;
@@ -28,22 +28,35 @@
 }
 
 .data-view-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #333;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #666;
+  text-transform: capitalize;
+  min-width: 100px;
+}
+
+.field-value {
   color: #333;
 }
 
 .data-view-field:first-child {
-  font-weight: 600;
   font-size: 1.1rem;
 }
 
-.data-view-field:not(:first-child) {
-  color: #666;
-  font-size: 0.9rem;
+.data-view-field:first-child .field-label {
+  color: #333;
 }
 
 .data-view-item-actions {
   display: flex;
   gap: 0.5rem;
+  margin-left: 1rem;
 }
 
 .video-button,
