@@ -22,6 +22,23 @@ const DynamicForm = ({
     }));
   };
 
+  const handleCheckboxGroupChange = (name, value, checked) => {
+    setFormData(prev => {
+      const currentValues = prev[name] || [];
+      if (checked) {
+        return {
+          ...prev,
+          [name]: [...currentValues, value]
+        };
+      } else {
+        return {
+          ...prev,
+          [name]: currentValues.filter(v => v !== value)
+        };
+      }
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
@@ -29,6 +46,24 @@ const DynamicForm = ({
 
   const renderField = (field) => {
     switch (field.type) {
+      case 'multiselect':
+        return (
+          <div className="checkbox-group">
+            {field.options?.map(option => (
+              <label key={option.value} className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name={field.name}
+                  value={option.value}
+                  checked={(formData[field.name] || []).includes(option.value)}
+                  onChange={(e) => handleCheckboxGroupChange(field.name, option.value, e.target.checked)}
+                  className="checkbox-input"
+                />
+                <span className="checkbox-text">{option.label}</span>
+              </label>
+            ))}
+          </div>
+        );
       case 'select':
         return (
           <select
