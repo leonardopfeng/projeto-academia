@@ -2,12 +2,21 @@ package br.com.lelis.data.vo;
 
 import br.com.lelis.model.User;
 import com.github.dozermapper.core.Mapping;
+import jakarta.persistence.Id;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class UserVO {
+public class UserVO extends RepresentationModel<UserVO> implements Serializable {
 
+    private static long serialVersionUID = 1L;
+
+    @Id
+    @Mapping("id")
+    private long key;
     @Mapping("userName")
     private String userName;
     private String password;
@@ -19,6 +28,14 @@ public class UserVO {
         this.userName = userName;
         this.password = password;
         this.roles = roles;
+    }
+
+    public long getKey() {
+        return key;
+    }
+
+    public void setKey(long key) {
+        this.key = key;
     }
 
     public String getUserName() {
@@ -50,11 +67,11 @@ public class UserVO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserVO userVO = (UserVO) o;
-        return Objects.equals(userName, userVO.userName) && Objects.equals(password, userVO.password) && Objects.equals(roles, userVO.roles);
+        return key == userVO.key && Objects.equals(userName, userVO.userName) && Objects.equals(password, userVO.password) && Objects.equals(roles, userVO.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, password, roles);
+        return Objects.hash(key, userName, password, roles);
     }
 }

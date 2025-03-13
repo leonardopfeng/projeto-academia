@@ -1,13 +1,20 @@
 package br.com.lelis.services;
 
+import br.com.lelis.controllers.UserController;
 import br.com.lelis.data.vo.UserVO;
 import br.com.lelis.exceptions.RequiredObjectIsNullException;
 import br.com.lelis.exceptions.ResourceNotFoundException;
+import br.com.lelis.mapper.DozerMapper;
 import br.com.lelis.model.Permission;
 import br.com.lelis.model.User;
 import br.com.lelis.repositories.PermissionRepository;
 import br.com.lelis.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class UserServices implements UserDetailsService {
@@ -31,6 +41,9 @@ public class UserServices implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    PagedResourcesAssembler<UserVO> assembler;
 
     public UserServices(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
@@ -88,5 +101,41 @@ public class UserServices implements UserDetailsService {
 
         // Retorna o UserVO com os dados do usuário criado
         return new UserVO(user.getUserName(), user.getPassword(), user.getRoles());
+    }
+
+    public PagedModel<EntityModel<UserVO>> findAll(Pageable pageable) {
+
+        logger.info("Finding all users!");
+
+        // using paging to prevent performing problems
+        var userPage = repository.findAll(pageable);
+        var userVosPage = userPage.map(p -> DozerMapper.parseObject(p, UserVO.class));
+
+        userVosPage.map(
+                p -> p.add(
+                        linkTo(methodOn(UserController.class).findById(p.getKey())).withSelfRel()
+                )
+        );
+
+        Link link = linkTo(methodOn(UserController.class).findAll(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                "ASC")
+        ).withSelfRel();
+
+        return assembler.toModel(userVosPage, link);
+    }
+
+    public UserVO findById(Long id) {
+
+        logger.info("Finding one user!");
+
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
+
+        var vo = DozerMapper.parseObject(entity, UserVO.class);
+        vo.add(linkTo(methodOn(UserController.class).findById(id)).withSelfRel());
+
+        return vo;
     }
 }
