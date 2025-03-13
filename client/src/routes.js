@@ -7,6 +7,8 @@ import ExerciseView from "./pages/Exercise/View";
 import ExerciseGroupView from "./pages/ExerciseGroup/View";
 import ExerciseForm from "./pages/Exercise/Form";
 import ExerciseGroupForm from "./pages/ExerciseGroup/Form";
+import UserView from "./pages/User/View";
+import UserForm from "./pages/User/Form";
 import { Header } from "./components/organisms/Header";
 
 export default function AppRoutes(){
@@ -26,6 +28,9 @@ export default function AppRoutes(){
                     <Route path="/exerciseGroup/view" element={<ExerciseGroupView/>}/>
                     <Route path="/exerciseGroup/add" element={<ExerciseGroupForm/>}/>
                     <Route path="/exerciseGroup/edit/:id" element={<ExerciseGroupForm/>}/>
+                    <Route path="/user/view" element={<UserView/>}/>
+                    <Route path="/user/add" element={<UserForm/>}/>
+                    <Route path="/user/edit/:id" element={<UserForm/>}/>
                 </Routes>
             </main>
         </>

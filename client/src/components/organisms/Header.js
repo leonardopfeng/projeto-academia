@@ -35,6 +35,7 @@ export const Header = () => {
                         <div className="dropdown-menu">
                             <Link to="/exercise/add" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Exercício</Link>
                             <Link to="/exerciseGroup/add" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Grupo</Link>
+                            <Link to="/user/add" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Usuário</Link>
                         </div>
                     )}
                 </div>
@@ -50,6 +51,7 @@ export const Header = () => {
                         <div className="dropdown-menu">
                             <Link to="/exercise/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Exercícios</Link>
                             <Link to="/exerciseGroup/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Grupos de Exercício</Link>
+                            <Link to="/user/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Usuários</Link>
                         </div>
                     )}
                 </div>
