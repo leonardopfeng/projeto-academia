@@ -1,15 +1,42 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DataView from '../../components/molecules/DataView';
+import SearchFilter from '../../components/molecules/SearchFilter';
 import api from "../../services/api";
 import './View.css';
 
 const ExerciseGroupView = () => {
   const navigate = useNavigate();
   const [exerciseGroups, setExerciseGroups] = React.useState([]);
+  const [filteredGroups, setFilteredGroups] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchExerciseGroups = async () => {
+      try {
+        const response = await api.get('/api/exerciseGroup/v1', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });
+        
+        // Access the nested exerciseGroupVOList
+        const groupsData = response.data?._embedded?.exerciseGroupVOList || [];
+        setExerciseGroups(groupsData);
+      } catch (error) {
+        console.error('Error fetching exercise groups:', error);
+        setExerciseGroups([]);
+      }
+    };
+
+    fetchExerciseGroups();
+  }, []);
+
+  React.useEffect(() => {
+    setFilteredGroups(exerciseGroups);
+  }, [exerciseGroups]);
 
   const handleExerciseGroupClick = (exerciseGroup) => {
-    navigate(`/exercise-group/${exerciseGroup.id}`);
+    navigate(`/exerciseGroup/edit/${exerciseGroup.key}`);
   };
 
   const handleDelete = async (exerciseGroup) => {
@@ -32,32 +59,38 @@ const ExerciseGroupView = () => {
     }
   };
 
-  React.useEffect(() => {
-    const fetchExerciseGroups = async () => {
-      try {
-        const response = await api.get('/api/exerciseGroup/v1', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        });
-        
-        // Access the nested exerciseGroupVOList (assuming similar structure to exercise endpoint)
-        const groupsData = response.data?._embedded?.exerciseGroupVOList || [];
-        setExerciseGroups(groupsData);
-      } catch (error) {
-        console.error('Error fetching exercise groups:', error);
-        setExerciseGroups([]);
-      }
-    };
+  const searchFields = [
+    { key: 'name', label: 'Group Name' }
+  ];
 
-    fetchExerciseGroups();
-  }, []);
+  const handleFilterChange = (searchValues) => {
+    const filtered = exerciseGroups.filter(group => {
+      return Object.entries(searchValues).every(([key, value]) => {
+        if (!value) return true; // if search value is empty, include all
+        const fieldValue = group[key]?.toString().toLowerCase() || '';
+        return fieldValue.includes(value.toLowerCase());
+      });
+    });
+    setFilteredGroups(filtered);
+  };
 
   return (
     <div className="exercise-group-view">
-      <h1>Exercise Groups</h1>
+      <div className="exercise-group-view-header">
+        <h1>Exercise Groups</h1>
+        <button 
+          className="add-button"
+          onClick={() => navigate('/exerciseGroup/add')}
+        >
+          Add Group
+        </button>
+      </div>
+      <SearchFilter 
+        searchFields={searchFields}
+        onFilterChange={handleFilterChange}
+      />
       <DataView
-        data={exerciseGroups}
+        data={filteredGroups}
         fields={['name']}
         onItemClick={handleExerciseGroupClick}
         onDelete={handleDelete}

@@ -15,9 +15,10 @@ const DataView = ({ data, fields, onItemClick, onDelete, showVideoButton }) => {
             onClick={() => onItemClick(item)}
           >
             {fields.map((field) => (
-              <div key={field}>
+              <div key={field} className="data-view-field">
                 {field === 'name' && item[field]}
-                {field === 'groupId' && `Group: ${item[field]}`}
+                {field === 'groupName' && `Group: ${item[field]}`}
+                {field === 'videoUrl' && item[field]}
               </div>
             ))}
           </div>

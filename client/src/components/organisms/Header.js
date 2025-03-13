@@ -20,7 +20,7 @@ export const Header = () => {
 
     return(
         <header className="header">
-            <Link to='/teste' style={{ textDecoration: 'none' }}>
+            <Link to='/home' style={{ textDecoration: 'none' }}>
                 <h1 className="header-title">Projeto Academia</h1>
             </Link>
             <nav className="header-nav">
@@ -33,7 +33,8 @@ export const Header = () => {
                 </button>
                     {activeDropdown === 'cadastros' && (
                         <div className="dropdown-menu">
-                            <Link to="/add/exercise" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Exercício</Link>
+                            <Link to="/exercise/add" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Exercício</Link>
+                            <Link to="/exerciseGroup/add" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cadastrar Grupo</Link>
                         </div>
                     )}
                 </div>
@@ -47,9 +48,8 @@ export const Header = () => {
                 </button>
                     {activeDropdown === 'listagem' && (
                         <div className="dropdown-menu">
-                            <Link to="/exercise/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Exercício</Link>
-                            <Link to="/exerciseGroup/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Grupo de Exercício</Link>
-                            <Link to="/client/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Cliente</Link>
+                            <Link to="/exercise/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Exercícios</Link>
+                            <Link to="/exerciseGroup/view" className="dropdown-item" onClick={() => setActiveDropdown(null)}>Grupos de Exercício</Link>
                         </div>
                     )}
                 </div>
