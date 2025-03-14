@@ -11,6 +11,10 @@ import UserView from "./pages/User/View";
 import UserForm from "./pages/User/Form";
 import CoachView from "./pages/Coach/View";
 import CoachForm from "./pages/Coach/Form";
+import ClientView from "./pages/Client/View";
+import ClientForm from "./pages/Client/Form";
+import TrainingSessionView from "./pages/TrainingSession/View";
+import TrainingSessionForm from "./pages/TrainingSession/Form";
 import { Header } from "./components/organisms/Header";
 
 export default function AppRoutes(){
@@ -36,6 +40,12 @@ export default function AppRoutes(){
                     <Route path="/coach/view" element={<CoachView/>}/>
                     <Route path="/coach/add" element={<CoachForm/>}/>
                     <Route path="/coach/edit/:id" element={<CoachForm/>}/>
+                    <Route path="/client/view" element={<ClientView/>}/>
+                    <Route path="/client/add" element={<ClientForm/>}/>
+                    <Route path="/client/edit/:id" element={<ClientForm/>}/>
+                    <Route path="/trainingSession/view" element={<TrainingSessionView/>}/>
+                    <Route path="/trainingSession/add" element={<TrainingSessionForm/>}/>
+                    <Route path="/trainingSession/edit/:id" element={<TrainingSessionForm/>}/>
                 </Routes>
             </main>
         </>

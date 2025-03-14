@@ -71,17 +71,16 @@ const CoachView = () => {
     const searchLower = searchTerm.toLowerCase();
     const coachUser = users[coach.userId];
     return (
-      coachUser?.fullname?.toLowerCase().includes(searchLower) ||
       coachUser?.userName?.toLowerCase().includes(searchLower) ||
       coach.certification?.toLowerCase().includes(searchLower)
     );
   });
 
-  const displayFields = ['fullname', 'certification', 'hiredDate'];
+  const displayFields = ['name', 'certification', 'hiredDate'];
 
   const processedCoaches = filteredCoaches.map(coach => ({
     ...coach,
-    fullname: users[coach.userId]?.fullname || 'Unknown User'
+    name: users[coach.userId]?.userName || 'Unknown User'
   }));
 
   if (loading) {

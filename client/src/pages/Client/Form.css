@@ -1,0 +1,19 @@
+.client-form {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.client-form h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 18px;
+  color: #666;
+} 

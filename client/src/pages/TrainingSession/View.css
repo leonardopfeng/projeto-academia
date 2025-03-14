@@ -1,0 +1,86 @@
+.training-session-view {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.training-session-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.training-session-view-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.add-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Column Widths */
+th:nth-child(1), td:nth-child(1) { width: 15%; } /* Client */
+th:nth-child(2), td:nth-child(2) { width: 15%; } /* Coach */
+th:nth-child(3), td:nth-child(3) { width: 30%; } /* Session Name */
+th:nth-child(4), td:nth-child(4) { width: 15%; } /* Start Date */
+th:nth-child(5), td:nth-child(5) { width: 15%; } /* Status */
+th:last-child, td:last-child { width: 10%; } /* Actions */
+
+tr:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 18px;
+  color: #666;
+} 

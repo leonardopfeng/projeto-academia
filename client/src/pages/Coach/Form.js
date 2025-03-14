@@ -59,7 +59,7 @@ const CoachForm = () => {
       required: true,
       options: users.map(user => ({
         value: user.key,
-        label: `${user.fullname} (${user.userName})`
+        label: `${user.fullName} (${user.userName})`
       }))
     },
     {

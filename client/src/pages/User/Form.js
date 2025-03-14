@@ -21,7 +21,7 @@ const UserForm = () => {
           const userData = {
             key: response.data.key,
             userName: response.data.userName,
-            fullname: response.data.fullname,
+            fullName: response.data.fullName,
             email: response.data.email,
             phone: response.data.phone,
             roles: response.data.roles || []
@@ -52,7 +52,7 @@ const UserForm = () => {
       required: !id // Password is required only for new users
     },
     {
-      name: 'fullname',
+      name: 'fullName',
       label: 'Full Name',
       type: 'text',
       required: true
@@ -90,7 +90,7 @@ const UserForm = () => {
 
       const payload = {
         userName: formData.userName,
-        fullname: formData.fullname,
+        fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
         roles: formData.roles || []
