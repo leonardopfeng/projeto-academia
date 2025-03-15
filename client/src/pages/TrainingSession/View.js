@@ -99,6 +99,18 @@ const TrainingSessionView = () => {
     navigate(`/trainingSession/edit/${session.key}`);
   };
 
+  const handleExercises = (session) => {
+    navigate(`/trainingSession/${session.key}/exercises`);
+  };
+
+  const handleAdd = () => {
+    navigate('/trainingSession/add');
+  };
+
+  const handleAfterSubmit = (sessionKey) => {
+    navigate(`/trainingSession/${sessionKey}/exercises`);
+  };
+
   const filteredSessions = sessions.filter(session => {
     const clientName = clients[session.clientId]?.userName || '';
     const coachName = coaches[session.coachId]?.userName || '';
@@ -148,13 +160,27 @@ const TrainingSessionView = () => {
     'Status': renderStatus(session.status)
   }));
 
+  const customActions = (item) => {
+    return (
+      <button
+        className="exercises-button"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleExercises({ key: item.key });
+        }}
+      >
+        Exercises
+      </button>
+    );
+  };
+
   return (
     <div className="training-session-view">
       <div className="training-session-view-header">
         <h1>Training Sessions</h1>
         <button 
           className="add-button"
-          onClick={() => navigate('/trainingSession/add')}
+          onClick={handleAdd}
         >
           Add Training Session
         </button>
@@ -176,6 +202,7 @@ const TrainingSessionView = () => {
         onItemClick={handleEdit}
         onDelete={handleDelete}
         idField="key"
+        customActions={customActions}
       />
     </div>
   );

@@ -57,16 +57,19 @@
   display: flex;
   gap: 0.5rem;
   margin-left: 1rem;
+  flex-direction: column;
 }
 
 .video-button,
-.delete-button {
+.delete-button,
+.exercises-button {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.2s;
+  width: 100px;
 }
 
 .video-button {

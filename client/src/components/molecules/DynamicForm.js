@@ -15,11 +15,20 @@ const DynamicForm = ({
   }, [initialData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, type, checked } = e.target;
+    
+    // Handle checkbox inputs differently
+    if (type === 'checkbox') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: checked
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleCheckboxGroupChange = (name, value, checked) => {
@@ -88,6 +97,16 @@ const DynamicForm = ({
             onChange={handleChange}
             required={field.required}
             placeholder={field.placeholder}
+          />
+        );
+      case 'checkbox':
+        return (
+          <input
+            type="checkbox"
+            name={field.name}
+            checked={!!formData[field.name]}
+            onChange={handleChange}
+            required={field.required}
           />
         );
       default:

@@ -15,6 +15,7 @@ import ClientView from "./pages/Client/View";
 import ClientForm from "./pages/Client/Form";
 import TrainingSessionView from "./pages/TrainingSession/View";
 import TrainingSessionForm from "./pages/TrainingSession/Form";
+import ExercisesForm from "./pages/TrainingSession/ExercisesForm";
 import { Header } from "./components/organisms/Header";
 
 export default function AppRoutes(){
@@ -28,24 +29,37 @@ export default function AppRoutes(){
                 <Routes>
                     <Route path="/" element={<Login/>}/>
                     <Route path="/home" element={<Home/>}/>
-                    <Route path="/exercise/view" element={<ExerciseView/>}/>
-                    <Route path="/exercise/add" element={<ExerciseForm/>}/>
-                    <Route path="/exercise/edit/:id" element={<ExerciseForm/>}/>
-                    <Route path="/exerciseGroup/view" element={<ExerciseGroupView/>}/>
-                    <Route path="/exerciseGroup/add" element={<ExerciseGroupForm/>}/>
-                    <Route path="/exerciseGroup/edit/:id" element={<ExerciseGroupForm/>}/>
-                    <Route path="/user/view" element={<UserView/>}/>
-                    <Route path="/user/add" element={<UserForm/>}/>
-                    <Route path="/user/edit/:id" element={<UserForm/>}/>
-                    <Route path="/coach/view" element={<CoachView/>}/>
-                    <Route path="/coach/add" element={<CoachForm/>}/>
-                    <Route path="/coach/edit/:id" element={<CoachForm/>}/>
-                    <Route path="/client/view" element={<ClientView/>}/>
-                    <Route path="/client/add" element={<ClientForm/>}/>
-                    <Route path="/client/edit/:id" element={<ClientForm/>}/>
-                    <Route path="/trainingSession/view" element={<TrainingSessionView/>}/>
-                    <Route path="/trainingSession/add" element={<TrainingSessionForm/>}/>
-                    <Route path="/trainingSession/edit/:id" element={<TrainingSessionForm/>}/>
+                    <Route path="user">
+                        <Route path="view" element={<UserView/>}/>
+                        <Route path="add" element={<UserForm/>}/>
+                        <Route path="edit/:id" element={<UserForm/>}/>
+                    </Route>
+                    <Route path="client">
+                        <Route path="view" element={<ClientView/>}/>
+                        <Route path="add" element={<ClientForm/>}/>
+                        <Route path="edit/:id" element={<ClientForm/>}/>
+                    </Route>
+                    <Route path="coach">
+                        <Route path="view" element={<CoachView/>}/>
+                        <Route path="add" element={<CoachForm/>}/>
+                        <Route path="edit/:id" element={<CoachForm/>}/>
+                    </Route>
+                    <Route path="exercise">
+                        <Route path="view" element={<ExerciseView/>}/>
+                        <Route path="add" element={<ExerciseForm/>}/>
+                        <Route path="edit/:id" element={<ExerciseForm/>}/>
+                    </Route>
+                    <Route path="exerciseGroup">
+                        <Route path="view" element={<ExerciseGroupView/>}/>
+                        <Route path="add" element={<ExerciseGroupForm/>}/>
+                        <Route path="edit/:id" element={<ExerciseGroupForm/>}/>
+                    </Route>
+                    <Route path="trainingSession">
+                        <Route path="view" element={<TrainingSessionView/>}/>
+                        <Route path="add" element={<TrainingSessionForm/>}/>
+                        <Route path="edit/:id" element={<TrainingSessionForm/>}/>
+                        <Route path=":sessionId/exercises" element={<ExercisesForm/>}/>
+                    </Route>
                 </Routes>
             </main>
         </>

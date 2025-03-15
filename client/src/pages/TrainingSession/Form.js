@@ -56,9 +56,10 @@ const TrainingSessionForm = () => {
           });
           setInitialData({
             ...sessionResponse.data,
-            startDate: sessionResponse.data.startDate.split('T')[0], // Format date for input
+            startDate: sessionResponse.data.startDate.split('T')[0],
             clientId: sessionResponse.data.clientId.toString(),
-            coachId: sessionResponse.data.coachId.toString()
+            coachId: sessionResponse.data.coachId.toString(),
+            status: sessionResponse.data.status
           });
         }
       } catch (error) {
@@ -101,39 +102,55 @@ const TrainingSessionForm = () => {
     {
       name: 'startDate',
       label: 'Start Date',
-      type: 'datetime-local',
+      type: 'date',
       required: true
     },
     {
       name: 'status',
-      label: 'Status',
+      label: 'Status (Active)',
       type: 'checkbox',
       required: false
     }
   ];
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (data) => {
     try {
-      const payload = {
-        clientId: parseInt(formData.clientId),
-        coachId: parseInt(formData.coachId),
-        name: formData.name,
-        startDate: new Date(formData.startDate).toISOString(),
-        status: formData.status || false
-      };
-
       const headers = {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
       };
 
+      // Detailed debugging for checkbox
+      console.log('--- DETAILED DEBUGGING ---');
+      console.log('Raw form data:', data);
+      console.log('Status field type:', typeof data.status);
+      console.log('Status field value:', data.status);
+      console.log('Status field truthiness:', Boolean(data.status));
+      console.log('-------------------------');
+
+      // Format the data with boolean status
+      const formattedData = {
+        ...data,
+        startDate: data.startDate + 'T00:00:00',
+        // Ensure status is a boolean, will be true if checked, false if not
+        status: Boolean(data.status)
+      };
+
+      // For PUT requests, ensure the key is included
       if (id) {
-        payload.key = parseInt(id);
-        await api.put(`/api/trainingSession/v1`, payload, { headers });
-      } else {
-        await api.post('/api/trainingSession/v1', payload, { headers });
+        formattedData.key = parseInt(id);
       }
 
-      navigate('/trainingSession/view');
+      console.log('Final formatted data:', JSON.stringify(formattedData, null, 2));
+
+      let response;
+      if (id) {
+        response = await api.put('/api/trainingSession/v1', formattedData, { headers });
+      } else {
+        response = await api.post('/api/trainingSession/v1', formattedData, { headers });
+      }
+
+      const sessionKey = response.data.key;
+      navigate(`/trainingSession/${sessionKey}/exercises`);
     } catch (error) {
       console.error('Error saving training session:', error);
       alert('Failed to save training session');
@@ -146,11 +163,21 @@ const TrainingSessionForm = () => {
 
   return (
     <div className="form-container">
+      <div className="form-header">
+        <h2>{id ? 'Edit Training Session' : 'Create Training Session'}</h2>
+        {id && (
+          <button
+            className="exercises-button"
+            onClick={() => navigate(`/trainingSession/${id}/exercises`)}
+          >
+            Exercises
+          </button>
+        )}
+      </div>
       <DynamicForm
         fields={fields}
         onSubmit={handleSubmit}
         initialData={initialData}
-        title={id ? 'Edit Training Session' : 'Create Training Session'}
         submitButtonText={id ? 'Update' : 'Create'}
       />
     </div>

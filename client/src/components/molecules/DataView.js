@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import VideoModal from './VideoModal';
 import './DataView.css';
 
-const DataView = ({ data, fields, onItemClick, onDelete, showVideoButton }) => {
+const DataView = ({ data, fields, onItemClick, onDelete, showVideoButton, customActions }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const formatFieldValue = (field, value) => {
@@ -57,6 +57,7 @@ const DataView = ({ data, fields, onItemClick, onDelete, showVideoButton }) => {
             >
               Delete
             </button>
+            {customActions && customActions(item)}
           </div>
         </div>
       ))}
@@ -77,11 +78,13 @@ DataView.propTypes = {
   onItemClick: PropTypes.func,
   onDelete: PropTypes.func.isRequired,
   showVideoButton: PropTypes.bool,
+  customActions: PropTypes.func,
 };
 
 DataView.defaultProps = {
   onItemClick: null,
   showVideoButton: false,
+  customActions: null,
 };
 
 export default DataView; 
