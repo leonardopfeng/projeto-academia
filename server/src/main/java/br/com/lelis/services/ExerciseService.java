@@ -1,7 +1,9 @@
 package br.com.lelis.services;
 
 import br.com.lelis.controllers.ExerciseController;
+import br.com.lelis.data.vo.ExerciseGroupVO;
 import br.com.lelis.data.vo.ExerciseVO;
+import br.com.lelis.data.vo.GroupedExerciseVO;
 import br.com.lelis.exceptions.RequiredObjectIsNullException;
 import br.com.lelis.exceptions.ResourceNotFoundException;
 import br.com.lelis.mapper.DozerMapper;
@@ -17,6 +19,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -114,5 +117,47 @@ public class ExerciseService {
         repository.delete(entity);
     }
 
+    public List<GroupedExerciseVO> findAllWithGroup(){
+        logger.info("Finding all exercises grouped by group name");
+
+        List<Object[]> results = repository.findAllWithGroup();
+
+        Map<Long, GroupedExerciseVO> groupMap = new LinkedHashMap<>();
+
+        for(Object[] row : results){
+            long exerciseId = ((Number) row[0]).longValue();
+            String exerciseName = (String) row[1];
+            String exerciseUrl = (String) row[2];
+            long exerciseGroupId = ((Number) row[3]).longValue();
+            long groupId = ((Number) row[4]).longValue();
+            String groupName = (String) row[5];
+
+            GroupedExerciseVO groupVo = groupMap.computeIfAbsent(groupId, k -> {
+                GroupedExerciseVO vo = new GroupedExerciseVO();
+                vo.setId(groupId);
+                vo.setName(groupName);
+                vo.setExercises(new ArrayList<>());
+                return vo;
+            });
+
+            ExerciseVO exerciseVO = new ExerciseVO();
+            exerciseVO.setKey(exerciseId);
+            exerciseVO.setName(exerciseName);
+            exerciseVO.setVideoUrl(exerciseUrl);
+            exerciseVO.setGroupId(exerciseGroupId);
+
+            exerciseVO.add(linkTo(methodOn(ExerciseController.class).findById(exerciseId)).withSelfRel());
+
+            groupVo.getExercises().add(exerciseVO);
+        }
+
+
+        List<GroupedExerciseVO> result = new ArrayList<>(groupMap.values());
+        for(GroupedExerciseVO group : result){
+            group.add(linkTo(methodOn(ExerciseController.class).findAllWithGroup()).withSelfRel());
+        }
+
+        return result;
+    }
 
 }

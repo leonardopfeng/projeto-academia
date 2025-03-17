@@ -14,100 +14,85 @@ const ExercisesForm = () => {
   const [groupNames, setGroupNames] = useState({});
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [groupedExercises, setGroupedExercises] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-          navigate('/');
-          return;
-        }
+    fetchData();
+  }, [sessionId]);
 
-        const headers = {
-          'Authorization': `Bearer ${token}`
-        };
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
 
-        // First fetch exercise groups
-        const groupsResponse = await api.get('/api/exerciseGroup/v1', { headers });
-        
-        const groups = groupsResponse.data?._embedded?.exerciseGroupVOList || [];
-        const groupMap = {};
-        groups.forEach(group => {
-          groupMap[group.key] = group.name;
-        });
-        setGroupNames(groupMap);
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        setError('No access token found. Please log in again.');
+        setLoading(false);
+        return;
+      }
 
-        // Then fetch exercises
-        const exercisesResponse = await api.get('/api/exercise/v1', { headers });
-        
-        // Group exercises by muscle group
-        const exercisesByGroup = {};
-        const exercisesList = exercisesResponse.data?._embedded?.exerciseVOList || [];
-        
-        exercisesList.forEach(exercise => {
-          const groupName = groupMap[exercise.groupId] || 'Other';
-          if (!exercisesByGroup[groupName]) {
-            exercisesByGroup[groupName] = [];
-          }
-          exercisesByGroup[groupName].push(exercise);
-        });
+      const headers = {
+        'Authorization': `Bearer ${accessToken}`
+      };
 
-        setExercises(exercisesByGroup);
-        
+      // Fetch exercises grouped by their groups using the new backend endpoint
+      const groupedResponse = await api.get('/api/exercise/v1/grouped', { headers });
+      console.log('Grouped exercises response:', groupedResponse.data);
+      
+      if (groupedResponse.data && Array.isArray(groupedResponse.data)) {
         // Initialize expanded state for all groups
         const initialExpandedState = {};
-        Object.keys(exercisesByGroup).forEach(group => {
-          initialExpandedState[group] = true;
+        groupedResponse.data.forEach(group => {
+          initialExpandedState[group.id] = true; // Start with all groups expanded
         });
         setExpandedGroups(initialExpandedState);
-
-        // Fetch existing exercises for this session
-        try {
-          const sessionExercisesResponse = await api.get(`/api/sessionExercise/v1/${sessionId}`, { headers });
-          const sessionExercises = sessionExercisesResponse.data?._embedded?.sessionExerciseVOList || [];
-          
-          // Find the corresponding exercises and set them as selected
-          const selectedExs = [];
-          const details = {};
-          
-          sessionExercises.forEach(sessionExercise => {
-            const exercise = exercisesList.find(e => e.key === sessionExercise.id.exerciseId);
-            if (exercise) {
-              selectedExs.push(exercise);
-              details[exercise.key] = {
-                sequence: sessionExercise.sequence,
-                sets: sessionExercise.sets,
-                reps: sessionExercise.reps,
-                weight: sessionExercise.weight
-              };
-            }
-          });
-
-          setSelectedExercises(selectedExs);
-          setExerciseDetails(details);
-        } catch (error) {
-          console.error('Error fetching session exercises:', error);
-          // Don't set error state here as we still want to show the form
-          // Just log the error and continue
-        }
-
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        if (error.response?.status === 401 || error.response?.status === 403) {
-          localStorage.removeItem('accessToken');
-          navigate('/');
-        } else {
-          setError('Failed to load exercises. Please try again later.');
-        }
-      } finally {
-        setLoading(false);
+        
+        // Set the grouped exercises directly
+        setGroupedExercises(groupedResponse.data);
+      } else {
+        console.error('Invalid response format for grouped exercises:', groupedResponse.data);
+        setError('Invalid data format received from server.');
       }
-    };
 
-    fetchData();
-  }, [navigate, sessionId]);
+      // Fetch existing exercises for this session
+      try {
+        const sessionExercisesResponse = await api.get(`/api/sessionExercise/v1/${sessionId}`, { headers });
+        const sessionExercises = sessionExercisesResponse.data?._embedded?.sessionExerciseVOList || [];
+        
+        // Find the corresponding exercises and set them as selected
+        const selectedExs = [];
+        const details = {};
+        
+        sessionExercises.forEach(sessionExercise => {
+          const exerciseId = sessionExercise.id.exerciseId.toString();
+          selectedExs.push({ key: exerciseId });
+          
+          details[exerciseId] = {
+            sequence: sessionExercise.sequence,
+            sets: sessionExercise.sets,
+            reps: sessionExercise.reps,
+            weight: sessionExercise.weight
+          };
+        });
+        
+        setSelectedExercises(selectedExs);
+        setExerciseDetails(details);
+      } catch (error) {
+        console.error('Error fetching session exercises:', error);
+        // Continue showing the form even if fetching existing exercises fails
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      if (error.response && error.response.status === 401) {
+        setError('Your session has expired. Please log in again.');
+      } else {
+        setError('Failed to load data. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleGroup = (group) => {
     setExpandedGroups(prev => ({
@@ -116,32 +101,40 @@ const ExercisesForm = () => {
     }));
   };
 
-  const toggleExercise = (exercise) => {
-    setSelectedExercises(prev => {
-      const isSelected = prev.some(e => e.key === exercise.key);
-      if (isSelected) {
-        // Remove exercise details when unselecting
-        const newDetails = { ...exerciseDetails };
-        delete newDetails[exercise.key];
-        setExerciseDetails(newDetails);
-        return prev.filter(e => e.key !== exercise.key);
-      } else {
-        // Initialize exercise details when selecting
-        setExerciseDetails(prev => ({
-          ...prev,
-          [exercise.key]: {
-            sequence: selectedExercises.length + 1,
-            sets: 3,
-            reps: 10,
-            weight: 0
-          }
-        }));
-        return [...prev, exercise];
-      }
-    });
+  const toggleExercise = (exerciseId) => {
+    const exerciseKey = exerciseId.toString();
+    const isSelected = isExerciseSelected(exerciseId);
+    
+    if (isSelected) {
+      // Remove exercise
+      setSelectedExercises(prev => prev.filter(e => e.key !== exerciseKey));
+      // Remove details
+      setExerciseDetails(prev => {
+        const newDetails = { ...prev };
+        delete newDetails[exerciseKey];
+        return newDetails;
+      });
+    } else {
+      // Add exercise with default details
+      setSelectedExercises(prev => [...prev, { key: exerciseKey }]);
+      setExerciseDetails(prev => ({
+        ...prev,
+        [exerciseKey]: {
+          sequence: prev[exerciseKey]?.sequence || 1,
+          sets: prev[exerciseKey]?.sets || 3,
+          reps: prev[exerciseKey]?.reps || 10,
+          weight: prev[exerciseKey]?.weight || 0
+        }
+      }));
+    }
   };
 
-  const handleDetailChange = (exerciseKey, field, value) => {
+  const isExerciseSelected = (exerciseId) => {
+    return selectedExercises.some(e => e.key === exerciseId.toString());
+  };
+
+  const handleDetailChange = (exerciseId, field, value) => {
+    const exerciseKey = exerciseId.toString();
     setExerciseDetails(prev => ({
       ...prev,
       [exerciseKey]: {
@@ -152,23 +145,20 @@ const ExercisesForm = () => {
   };
 
   const handleSave = async () => {
+    setSaving(true);
     try {
-      setSaving(true);
-      const token = localStorage.getItem('accessToken');
-      
-      if (!token) {
-        console.error('No access token found');
-        navigate('/');
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        setError('No access token found. Please log in again.');
+        setSaving(false);
         return;
       }
 
       const headers = {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       };
 
-      console.log('Starting to save exercises...');
-      
       // First, get existing exercises to determine which ones to update vs create
       const existingResponse = await api.get(`/api/sessionExercise/v1/${sessionId}`, { headers });
       const existingExercises = existingResponse.data?._embedded?.sessionExerciseVOList || [];
@@ -204,13 +194,12 @@ const ExercisesForm = () => {
           }
         } catch (exerciseError) {
           console.error('Error saving exercise:', exerciseError);
-          console.error('Error response:', exerciseError.response);
-          if (exerciseError.response?.status === 401) {
-            localStorage.removeItem('accessToken');
-            navigate('/');
+          if (exerciseError.response && exerciseError.response.status === 401) {
+            setError('Your session has expired. Please log in again.');
+            setSaving(false);
             return;
           }
-          throw exerciseError;
+          // Continue with other exercises even if one fails
         }
       }
 
@@ -234,45 +223,107 @@ const ExercisesForm = () => {
         }
       }
 
-      console.log('All exercises saved successfully');
-      navigate('/trainingSession/view');
+      navigate(`/trainingSession/view`);
     } catch (error) {
-      console.error('Error in handleSave:', error);
-      console.error('Error details:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        headers: error.response?.headers
-      });
-
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        console.error('Authentication error - redirecting to login');
-        localStorage.removeItem('accessToken');
-        navigate('/');
+      console.error('Error saving exercises:', error);
+      if (error.response && error.response.status === 401) {
+        setError('Your session has expired. Please log in again.');
       } else {
-        alert(`Failed to save exercises: ${error.response?.data?.message || 'Unknown error'}`);
+        setError('Failed to save exercises. Please try again.');
       }
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
+  const renderExercises = () => {
+    if (loading) {
+      return <div className="loading">Loading exercises...</div>;
+    }
 
-  if (error) {
+    if (error) {
+      return (
+        <div className="error-container">
+          <div className="error-message">{error}</div>
+          <button className="retry-button" onClick={fetchData}>Retry</button>
+        </div>
+      );
+    }
+
     return (
-      <div className="error-container">
-        <p className="error-message">{error}</p>
-        <button 
-          className="retry-button"
-          onClick={() => window.location.reload()}
-        >
-          Retry
-        </button>
+      <div className="exercise-groups">
+        {groupedExercises.map(group => (
+          <div key={group.id} className="exercise-group">
+            <div 
+              className="group-header" 
+              onClick={() => toggleGroup(group.id)}
+            >
+              <h3>{group.name}</h3>
+              <span className="expand-icon">
+                {expandedGroups[group.id] ? '−' : '+'}
+              </span>
+            </div>
+            {expandedGroups[group.id] && (
+              <div className="group-exercises">
+                {group.exercises.map(exercise => (
+                  <div 
+                    key={exercise.key} 
+                    className={`exercise-item ${isExerciseSelected(exercise.key) ? 'selected-exercise' : ''}`}
+                    onClick={() => toggleExercise(exercise.key)}
+                  >
+                    <div className="exercise-name">
+                      {exercise.name}
+                    </div>
+                    {isExerciseSelected(exercise.key) && (
+                      <div className="exercise-details">
+                        <div className="detail-field">
+                          <label>Sequence:</label>
+                          <input
+                            type="number"
+                            value={exerciseDetails[exercise.key]?.sequence || ''}
+                            onChange={e => handleDetailChange(exercise.key, 'sequence', e.target.value)}
+                            onClick={e => e.stopPropagation()}
+                          />
+                        </div>
+                        <div className="detail-field">
+                          <label>Sets:</label>
+                          <input
+                            type="number"
+                            value={exerciseDetails[exercise.key]?.sets || ''}
+                            onChange={e => handleDetailChange(exercise.key, 'sets', e.target.value)}
+                            onClick={e => e.stopPropagation()}
+                          />
+                        </div>
+                        <div className="detail-field">
+                          <label>Reps:</label>
+                          <input
+                            type="number"
+                            value={exerciseDetails[exercise.key]?.reps || ''}
+                            onChange={e => handleDetailChange(exercise.key, 'reps', e.target.value)}
+                            onClick={e => e.stopPropagation()}
+                          />
+                        </div>
+                        <div className="detail-field">
+                          <label>Weight:</label>
+                          <input
+                            type="number"
+                            value={exerciseDetails[exercise.key]?.weight || ''}
+                            onChange={e => handleDetailChange(exercise.key, 'weight', e.target.value)}
+                            onClick={e => e.stopPropagation()}
+                            step="0.1"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     );
-  }
+  };
 
   return (
     <div className="exercises-form">
@@ -296,82 +347,7 @@ const ExercisesForm = () => {
         </div>
       </div>
 
-      <div className="exercise-groups">
-        {Object.entries(exercises).map(([group, groupExercises]) => (
-          <div key={group} className="exercise-group">
-            <div 
-              className="group-header" 
-              onClick={() => toggleGroup(group)}
-            >
-              <h2>{group}</h2>
-              <span className={`arrow ${expandedGroups[group] ? 'expanded' : ''}`}>
-                ▼
-              </span>
-            </div>
-            {expandedGroups[group] && (
-              <div className="exercise-list">
-                {groupExercises.map(exercise => {
-                  const isSelected = selectedExercises.some(
-                    e => e.key === exercise.key
-                  );
-                  return (
-                    <div
-                      key={exercise.key}
-                      className={`exercise-item ${isSelected ? 'selected' : ''}`}
-                    >
-                      <div className="exercise-item-header" onClick={() => toggleExercise(exercise)}>
-                        <span className="exercise-name">{exercise.name}</span>
-                        {isSelected && <span className="check-mark">✓</span>}
-                      </div>
-                      {isSelected && (
-                        <div className="exercise-details">
-                          <div className="detail-field">
-                            <label>Sequence:</label>
-                            <input
-                              type="number"
-                              min="1"
-                              value={exerciseDetails[exercise.key]?.sequence || 1}
-                              onChange={(e) => handleDetailChange(exercise.key, 'sequence', e.target.value)}
-                            />
-                          </div>
-                          <div className="detail-field">
-                            <label>Sets:</label>
-                            <input
-                              type="number"
-                              min="1"
-                              value={exerciseDetails[exercise.key]?.sets || 3}
-                              onChange={(e) => handleDetailChange(exercise.key, 'sets', e.target.value)}
-                            />
-                          </div>
-                          <div className="detail-field">
-                            <label>Reps:</label>
-                            <input
-                              type="number"
-                              min="1"
-                              value={exerciseDetails[exercise.key]?.reps || 10}
-                              onChange={(e) => handleDetailChange(exercise.key, 'reps', e.target.value)}
-                            />
-                          </div>
-                          <div className="detail-field">
-                            <label>Weight (kg):</label>
-                            <input
-                              type="number"
-                              min="0"
-                              step="0.5"
-                              value={exerciseDetails[exercise.key]?.weight || 0}
-                              onChange={(e) => handleDetailChange(exercise.key, 'weight', e.target.value)}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {renderExercises()}
     </div>
   );
 };

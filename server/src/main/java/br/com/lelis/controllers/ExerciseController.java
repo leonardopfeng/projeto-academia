@@ -1,6 +1,7 @@
 package br.com.lelis.controllers;
 
 import br.com.lelis.data.vo.ExerciseVO;
+import br.com.lelis.data.vo.GroupedExerciseVO;
 import br.com.lelis.services.ExerciseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -16,6 +17,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/exercise/v1")
@@ -171,4 +174,33 @@ public class ExerciseController {
         // returns 204 code
         return ResponseEntity.noContent().build();
     }
+
+    @CrossOrigin(origins = {"http://localhost:8080", "https://lelis.com.br"})
+    @GetMapping(value = "/grouped",
+            produces = {
+                    br.com.lelis.util.MediaType.APPLICATION_JSON,
+                    br.com.lelis.util.MediaType.APPLICATION_XML,
+                    br.com.lelis.util.MediaType.APPLICATION_YML
+            })
+    @Operation(
+            summary = "Finds all Exercises grouped by Group name",
+            description = "Finds all Exercises grouped by Group name",
+            tags = {"Exercises"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content =
+                            @Content(
+                                    schema = @Schema(implementation = GroupedExerciseVO.class)
+                            )
+                    ),
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal error", responseCode = "500", content = @Content)
+            })
+    public ResponseEntity<List<GroupedExerciseVO>> findAllWithGroup(){
+        return ResponseEntity.ok(service.findAllWithGroup());
+    }
+
 }
